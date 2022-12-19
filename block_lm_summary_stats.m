@@ -1,4 +1,5 @@
-function [ block_xY, block_sos ] = block_lm_summary_stats( data, design, nblocks )
+function [ block_xY, block_sos, block_Y ] = ...
+                  block_lm_summary_stats( data, design, nblocks, doblockY )
 % BLOCK_LM_SUMMARY_STATS( lat_data, design, contrast_matrix, nblocks )
 % computes X^TY and Y.^2 in blocks for input into fast permutation
 % functions
@@ -19,6 +20,9 @@ function [ block_xY, block_sos ] = block_lm_summary_stats( data, design, nblocks
 % block_sos   an array with dimension given by the vector [nvox, nblocks] 
 %            such that block_sos(..., I) is the voxelwise sum of the squares 
 %            of the entries of the Ith block
+% block_Y    an array with dimension given by the vector [nvox, nblocks]
+%            sum that block_Y(:, I) = \sum_{i in Ith block} Y_i
+%            for I = 1:nblocks.
 %--------------------------------------------------------------------------
 % EXAMPLES
 % nsubj = 10; p = 4; nvox = 49;
@@ -29,6 +33,10 @@ function [ block_xY, block_sos ] = block_lm_summary_stats( data, design, nblocks
 %--------------------------------------------------------------------------
 % AUTHOR: Samuel Davenport
 %--------------------------------------------------------------------------
+
+if ~exist('doblockY', 'var')
+    doblockY = 0;
+end
 
 %%  Check mandatory input and get important constants
 %--------------------------------------------------------------------------
@@ -51,6 +59,9 @@ end
 % Initialize the arrays to store the block sum and sum of squares
 block_xY = zeros([dim, nparams, nblocks]);
 block_sos = zeros([dim, nblocks]); % sos = sum of squares
+if doblockY
+    block_Y = zeros([dim, nblocks]);
+end
 
 %%  Main Function Loop
 %--------------------------------------------------------------------------
@@ -75,7 +86,21 @@ for I = 1:nblocks
     block_xY(variable_index{:}, :, I) = data(variable_index{:}, block_subject_indices)*design(block_subject_indices, :);
 
     % Assign the block sum of squares
-    block_sos(variable_index{:}, I) = sum(data(variable_index{:}, block_subject_indices).^2, D+1);
+    block_sos(variable_index{:}, I) = sum(data(variable_index{:}, block_subject_indices).^2, D+1);    
+end
+
+if doblockY
+    % Initialize the indices for the blocks
+    block_subject_indices = (1:nsubj_per_block) - nsubj_per_block;
+
+    for J = 1:nblocks
+        block_subject_indices = block_subject_indices + nsubj_per_block;
+        
+        % Calculate the sum of the Ys
+        block_Y(variable_index{:}, I) = sum(data(variable_index{:}, block_subject_indices), D+1);
+    end
+else
+    block_Y = NaN;
 end
 
 end

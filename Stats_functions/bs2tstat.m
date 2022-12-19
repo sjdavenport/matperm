@@ -25,7 +25,8 @@ n_contrasts = size(contrast_matrix,1);
 
 %%  Main Function Loop
 %--------------------------------------------------------------------------
-Cbetahat = (contrast_matrix*betahat')';
+% Cbetahat = (contrast_matrix*betahat')';
+Cbetahat = betahat*contrast_matrix';
 tstat_array = Cbetahat./sigmahat;
 
 % Scale by the scaling constants to ensure variance 1

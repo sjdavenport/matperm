@@ -1,15 +1,15 @@
 function [ tstat_array, residuals, Cbetahat, betahat, sigmahat ] = ...
-            contrast_tstats_noerrorchecking(data, design, contrast_matrix)
+      contrast_tstats_noerrorchecking(data, design_matrix, contrast_matrix)
 % A function to compute the voxelwise t-statistics for a set of contrasts
-% but with no error checking. This is designed for input into permutation 
+% but with no error checking. This is design_matrixed for input into permutation 
 % so you do not have to run the error checking every time.
 %--------------------------------------------------------------------------
 % ARGUMENTS
 % Mandatory
 % data:  an object of class field giving the data for N subjects on 
-%            which to calculate the contrasts
-% design:    an N by p matrix giving the covariates (p being the number of
-%            parameters
+%        which to calculate the contrasts
+% design_matrix:    an N by p matrix giving the covariates (p being the 
+%                   number of parameters
 % contrast_matrix: an L by p matrix corresponding to the contrast matrix, 
 %                  such that which each row is a contrast vector (where L 
 %                  is the number of constrasts)
@@ -26,7 +26,7 @@ function [ tstat_array, residuals, Cbetahat, betahat, sigmahat ] = ...
 % EXAMPLES
 % % One-sample t-statistic
 % Dim = [3,3]; N = 30; categ = zeros(1, N);
-% X = group_design(categ); C = 1; lat_data = wfield(Dim,N);
+% X = group_design_matrix(categ); C = 1; lat_data = wfield(Dim,N);
 % tstat = contrast_tstats_noerrorchecking(lat_data.field, X, C)
 % %Compare to mvtstat:
 % tstat
@@ -41,17 +41,17 @@ n_contrasts = size(contrast_matrix,1);  % number of constrasts
 D = length(size(data)) - 1;
 
 % Calculate the number of parameters p and subjects N
-nsubj = size(design,1); % subjects
-n_params = size(design,2); % parameters
+nsubj = size(design_matrix,1); % subjects
+n_params = size(design_matrix,2); % parameters
 
-xtx_inv = inv(design'*design);
+xtx_inv = inv(design_matrix'*design_matrix);
 
 % Calculate betahat everywhere
-betahat = marray(xtx_inv * design', data);
-% betahat = xtx_inv * design' * lat_data;
+betahat = marray(xtx_inv * design_matrix', data);
+% betahat = xtx_inv * design_matrix' * lat_data;
 
 % Calculate the residual forming matrix
-rfmate = eye(nsubj) - design * xtx_inv * design';
+rfmate = eye(nsubj) - design_matrix * xtx_inv * design_matrix';
 
 % Compute the estimate of the variance via the residuals (I-P)Y
 % residuals = rfmate * lat_data;

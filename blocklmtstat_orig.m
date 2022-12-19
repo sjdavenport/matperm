@@ -1,20 +1,17 @@
-function [ betahat, sigmahat ] = blocklmtstat( block_xY, block_sos, ...
-                                                    block_Y, design_matrix)
-% BLOCKLMTSTAT( block_xY, block_sos, block_Y, design_matrix) takes block
+function [ betahat, sigmahat ] = blocklmtstat_orig( block_xY, block_sos, ...,
+                                                            design_matrix)
+% BLOCKLMTSTAT( block_xY, block_sos, contrast_matrix, nsubj ) takes block
 % X^TY and the sum of Y squared (voxelwise) and uses these to compute the
 % test-statistics.
 %--------------------------------------------------------------------------
 % ARGUMENTS
 % Mandatory
-%  block_xY   an array of size [nvox, nblocks] such that
+%  block_xY    an array of size [nvox, nblocks] such that
 %             block_xY(..., I) is \sum_{i in Ith block} x_i Y_i
 %             This can be calculated using block_lm_summary_stats
 %  block_sos  an array of size [nvox, nblocks] such that block_sos(..., I)
 %             is the voxelwise sum of the squares of the entries of the Ith 
 %             block. This can be calculated using block_lm_summary_stats.
-%  block_Y    an array of size [nvox, nblocks] such that
-%             block_Y(..., I) is \sum_{i in Ith block} Y_i
-%             This can be calculated using block_lm_summary_stats
 %  design_matrix  the n by p design matrix where n is the number of subjects
 %                and p is the number of parameters in the model
 %--------------------------------------------------------------------------
@@ -57,10 +54,12 @@ betahat = block_xY_sum*xtx_inv;  %Note no need to transpose xtx_inv because it i
 
 % Compute sigma
 sum_of_sos = sum(block_sos, D + 1);
-sum_of_sums = sum(block_Y, D + 1);
+middle_term = -2*sum(block_xY_sum.*betahat, 2);
+end_term = betahat*xtx;
+end_term = sum(end_term.*betahat, 2);
 design_rank = rank(design_matrix);
-sigmahat = (1/nsubj)*sum_of_sos - ((1/nsubj)*sum_of_sums).^2;
-sigmahat = ((nsubj/(nsubj - design_rank))*sigmahat).^(1/2);
+sigmahat = (1/(nsubj - design_rank))*(sum_of_sos + middle_term + end_term);
+sigmahat = sigmahat.^(1/2);
 
 end
 
