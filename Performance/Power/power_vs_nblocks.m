@@ -6,18 +6,22 @@ niters = 10000;
 
 fpr_fp = zeros(2, length(numberofblocks));
 
+domeanperm
+
 for I = 1:length(numberofblocks)
     spfn = @(n) randn(n, 1)' + 0.05;
     fpr_fp(1,I) = rc_fastperm( spfn, nsubj, numberofblocks(I), nperm, 0, niters);
     fpr_fp(2,I) = rc_fastperm( spfn, nsubj, numberofblocks(I), nperm, 1, niters);
 end
 
-save('./onesamplepower', 'fpr_fp')
+save('./power_vs_nblocks', 'fpr_fp')
 
 %% Plotting power
+mploc = 'C:\Users\12SDa\davenpor\davenpor\Toolboxes\matperm\';
+
 numberofblocks = [5,10,20,50,100,250,1000];
 niters = 10000;
-load('./onesamplepower.mat')
+load([mploc, 'Performance\power_vs_nblocks.mat'])
 h(1) = plot(fpr_fp(1,:), 'color', 'blue');
 std_error_intervals = bernstd( fpr_fp(1,:), niters, 0.95 );
 hold on
@@ -27,8 +31,11 @@ h(4) = plot(fpr_fp(2,:), 'color', 'red');
 std_error_intervals_2 = bernstd( fpr_fp(2,:), niters, 0.95 );
 h(5) = plot(std_error_intervals_2(1,:)', '--', 'color', 'red');
 h(6) = plot(std_error_intervals_2(2,:)', '--', 'color', 'red');
-legend([h(1), h(4)], {'No randomization', 'Initial randomization'}, 'Location', 'SouthEast')
+legend([h(1), h(4)], {'No initial randomization', 'Initial randomization'}, 'Location', 'SouthEast')
 ylabel('Power')
 title('Power vs Number of Blocks')
 xticklabels(numberofblocks)
 xlabel('Number of blocks')
+
+saveloc = [mploc, '\Performance\Figures\'];
+export_fig([saveloc, 'power_vs_nblocks.pdf'], '-transparent')

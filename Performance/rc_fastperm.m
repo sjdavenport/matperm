@@ -1,5 +1,5 @@
-function [ fpr ] = rc_fastperm( spfn, nsubj, nblocks, nperm, init_randomize, niters, alpha )
-% RC_fastperm() tests the fpr for the fast permutation method
+function [ fpr ] = rc_fastperm( spfn, nsubj, nblocks, nperm, domeanperm, init_randomize, demean, niters, alpha )
+% RF_FASTPERM tests the fpr for the fast permutation method
 %--------------------------------------------------------------------------
 % ARGUMENTS
 % Mandatory
@@ -36,6 +36,11 @@ if ~exist( 'nperm', 'var' )
    nperm = 1000;
 end
 
+if ~exist( 'domean', 'var' )
+   % Default value
+  	domeanperm = 0;
+end
+
 if ~exist( 'alpha', 'var' )
    % Default value
    alpha = 0.05;
@@ -44,6 +49,11 @@ end
 if ~exist( 'niters', 'var' )
    % Default value
    niters = 1000;
+end
+
+if ~exist( 'demean', 'var' )
+   % Default value
+   demean = 0;
 end
 
 if ~exist( 'init_randomize', 'var' )
@@ -56,7 +66,12 @@ fpr = 0;
 for b = 1:niters
     modul(b,100)
     data = spfn(nsubj);
-    [threshold, vec_of_maxima, ~ ] = fastperm( data, nblocks, alpha, nperm, 0, init_randomize);
+    if domeanperm
+        [threshold, vec_of_maxima, ~ ] = fastperm_mean( data, nblocks, alpha, nperm, demean, 0, 0, init_randomize);
+    else
+        [threshold, vec_of_maxima, ~ ] = fastperm( data, nblocks, alpha, nperm, 0, 0, init_randomize);
+    end
+    
     if vec_of_maxima(1) > threshold
         fpr = fpr + 1;
     end

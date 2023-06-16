@@ -20,12 +20,11 @@ function [tstat, xbar, std_dev, cohensd] = block_tstat( block_sum, block_sos, ns
 % xbar          the mean at each voxel
 % std_dev       the standard deviation at each voxel (calculated using the
 %               unbiased estimate of the variance)
-% 
 %--------------------------------------------------------------------------
 % EXAMPLES
 % % An example to ensure the output is correct
 % dim = [2,2]; nsubj = 100;
-% data = noisegen(dim, nsubj, 2, 0);
+% randn([dim, nsubj])
 % tstat_orig = mvtstat(data, dim)
 % [block_sum, block_sos] = block_summary_stats( data, 10 );
 % tstat_block = block_tstat( block_sum, block_sos, nsubj )

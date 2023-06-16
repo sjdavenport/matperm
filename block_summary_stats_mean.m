@@ -1,4 +1,4 @@
-function [ block_sum, block_sos ] = block_summary_stats( data, nblocks )
+function block_sum = block_summary_stats_mean( data, nblocks )
 % BLOCK_SUMMARY_STATS( data, nblocks ) computes the one-sample
 % block summary statistics of the data for use in the implementation of
 % fast permutation techniques.
@@ -17,8 +17,8 @@ function [ block_sum, block_sos ] = block_summary_stats( data, nblocks )
 % EXAMPLES
 % dim = [2,2]; nsubj = 100;
 % randn([dim, nsubj])
-% tstat_orig = mvtstat(data, dim)
-% [block_sum, block_sos] = block_summary_stats( data, 10 );
+% mean_orig = mean(data, dim)
+% block_sum = block_summary_stats_mean( data, 10 );
 %--------------------------------------------------------------------------
 % AUTHOR: Samuel Davenport
 %--------------------------------------------------------------------------
@@ -40,7 +40,6 @@ end
 
 % Initialize the arrays to store the block sum and sum of squares
 block_sum = zeros([dim, nblocks]);
-block_sos = zeros([dim, nblocks]); % sos = sum of squares
 
 %%  Main Function Loop
 %--------------------------------------------------------------------------
@@ -60,9 +59,7 @@ for I = 1:nblocks
     
     % Assign the block means
     block_sum(variable_index{:}, I) = sum(data(variable_index{:}, block_subject_indices),D+1);
-    
-    % Assign the block sum of squares
-    block_sos(variable_index{:}, I) = sum(data(variable_index{:}, block_subject_indices).^2, D+1);
+
 end
 
 end

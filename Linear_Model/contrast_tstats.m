@@ -25,12 +25,17 @@ function [ tstat_array, residuals ] = contrast_tstats( data, design, contrast_ma
 %               Ith subject
 %--------------------------------------------------------------------------
 % EXAMPLES
+% % One-sample t-statistic
 % Dim = [3,3]; N = 30; categ = zeros(1, N);
 % X = group_design(categ); C = 1; lat_data = wfield(Dim,N);
 % tstat_array = contrast_tstats(lat_data.field, X, C)
 % %Compare to mvtstat:
 % tstat_array
 % mvtstat(lat_data.field)
+%
+% % Several contrasts
+%
+% 
 %--------------------------------------------------------------------------
 % AUTHOR: Samuel Davenport
 %--------------------------------------------------------------------------

@@ -1,5 +1,5 @@
-function [ threshold, vec_of_maxima, permuted_tstat_store ] = ...
-        fastperm( data, nblocks, alpha, nperm, store_perms, init_randomize)
+function [ threshold, vec_of_maxima, original_tstat, permuted_tstat_store ] = ...
+        fastperm( data, nblocks, alpha, nperm, show_loader, store_perms, init_randomize)
 % FASTPERM( data, nblocks, alpha, nperm, store_perms, init_randomize)
 %--------------------------------------------------------------------------
 % ARGUMENTS
@@ -27,16 +27,16 @@ function [ threshold, vec_of_maxima, permuted_tstat_store ] = ...
 % % Signle voxel example
 % nsubj = 100; nvox = 50; nblocks = 10; alpha = 0.05; nperm = 1000;
 % data = normrnd(0,1,nvox,nsubj);
-% [~, threshold_orig] = perm_thresh(data, 'T', alpha, NaN, NaN, 0, nperm)
-% threshold_fast_perm = fast_perm( data, nblocks, alpha, nperm )
+% [~, threshold_orig] = perm_thresh(data, 'T', 0, 0, alpha, NaN, NaN, 0, nperm)
+% threshold_fast_perm = fastperm( data, nblocks, alpha, nperm )
 %
 % % Larger Image example
 % dim = [10,10]; nsubj = 1000;
 % data = noisegen(dim, nsubj, 2, 0);
-% tic; [~, threshold_orig_perm] = perm_thresh(data, 'T', alpha, NaN, NaN, 0, nperm); toc
-% tic; threshold_fast_perm_10blocks = fast_perm( data, 10, alpha, nperm ); toc
-% tic; threshold_fast_perm_30blocks = fast_perm( data, 30, alpha, nperm ); toc
-% tic; threshold_fast_perm_50blocks = fast_perm( data, 50, alpha, nperm ); toc
+% tic; [~, threshold_orig_perm] = perm_thresh(data, 'T', 0, 0, alpha, NaN, NaN, 0, nperm); toc
+% tic; threshold_fast_perm_10blocks = fastperm( data, 10, alpha, nperm ); toc
+% tic; threshold_fast_perm_30blocks = fastperm( data, 30, alpha, nperm ); toc
+% tic; threshold_fast_perm_50blocks = fastperm( data, 50, alpha, nperm ); toc
 % threshold_orig_perm
 % threshold_fast_perm_10blocks
 % threshold_fast_perm_30blocks
@@ -57,6 +57,14 @@ end
 
 if ~exist('store_perms', 'var')
     store_perms = 0;
+end
+
+if ~exist('demean', 'var')
+    demean = 0;
+end
+
+if ~exist('show_loader', 'var')
+    show_loader = 0;
 end
 
 if ~exist('init_randomize', 'var')
@@ -122,7 +130,11 @@ end
 random_berns = 2*(binornd(1,0.5, nblocks, nperm )-1/2);
 
 for I = 2:nperm
-    %     modul(iter, 100);
+    % Record progress
+    if show_loader == 1
+        loader(I-1, nperm-1, 'fastperm progress:');
+    end
+    
     random_berns_for_iter = random_berns(:, I);
     random_sample_negative = find(random_berns_for_iter < 0);
     
@@ -139,7 +151,7 @@ for I = 2:nperm
     permuted_tstat = block_tstat(permuted_block_sum, block_sos, nsubj);
     
     % Compute the maximal permuted t-statistic
-    vec_of_maxima(I) = max(permuted_tstat(:));
+    vec_of_maxima(I) = max(permuted_tstat(:)); 
     
     % Store the permuted t-statistic image (if desired)
     if store_perms == 1
