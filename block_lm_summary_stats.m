@@ -19,7 +19,8 @@ function [ block_xY, block_sos, block_Y ] = ...
 %            \leq nsubj).
 % block_sos   an array with dimension given by the vector [nvox, nblocks] 
 %            such that block_sos(..., I) is the voxelwise sum of the squares 
-%            of the entries of the Ith block
+%            of the entries of the Ith block ie:
+%            \sum_{i in Ith block} Y_i.^2
 % block_Y    an array with dimension given by the vector [nvox, nblocks]
 %            sum that block_Y(:, I) = \sum_{i in Ith block} Y_i
 %            for I = 1:nblocks.
@@ -97,7 +98,7 @@ if doblockY
         block_subject_indices = block_subject_indices + nsubj_per_block;
         
         % Calculate the sum of the Ys
-        block_Y(variable_index{:}, I) = sum(data(variable_index{:}, block_subject_indices), D+1);
+        block_Y(variable_index{:}, J) = sum(data(variable_index{:}, block_subject_indices), D+1);
     end
 else
     block_Y = NaN;

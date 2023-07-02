@@ -15,7 +15,12 @@ fpr_blb = rc_blb(  spfn, nsubj, floor(nsubj^(0.7)), 5, 30 )
 %% BLB with low b doesn't control the FPR (and is already slower than the cheetah approach)
 spfn = @(n) randn(n, 1)'; nsubj = 1000;
 fpr_blb = rc_blb(  spfn, nsubj, floor(nsubj^(0.5)), 5, 30 )
-rc_blb(  spfn, 10000, 25, 5, 30 )
+rc_blb( spfn, 10000, 25, 5, 30 )
+
+%%
+nvox = 1;
+spfn = @(n) randn(n, nvox)';
+rc_blb( spfn, 100000, 300, 5, 30 )
 
 %% Compare BLB and fast perm
 spfn = @(n) randn(n, 1)'; nsubj = 1000;

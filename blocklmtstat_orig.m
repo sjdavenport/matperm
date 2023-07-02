@@ -24,7 +24,7 @@ function [ betahat, sigmahat ] = blocklmtstat_orig( block_xY, block_sos, ...,
 % design_matrix = randn(nsubj, p);
 % nblocks = 10;
 % [ block_xY, block_sos ] = block_lm_summary_stats( data, design_matrix, nblocks );
-% [ betahat, sigmahat ] = blocklmtstat( block_xY, block_sos, design_matrix);
+% [ betahat, sigmahat ] = blocklmtstat_orig( block_xY, block_sos, design_matrix);
 % [ ~, ~, ~, betahat2, sigmahat2 ] = ...
 %       contrast_tstats_noerrorchecking(data, design_matrix, ones(1,p));
 % sum(betahat(:) - betahat2(:))

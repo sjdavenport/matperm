@@ -27,7 +27,7 @@ mploc = 'C:\Users\12SDa\davenpor\davenpor\Toolboxes\matperm\';
 numberofblocks = [5,10,20,50,100,250,1000];
 niters = 1000;
 nsubj = 1000;
-load([mploc, 'Performance\fpr_vs_nblocks_', num2str(nsubj), '.mat'])
+load([mploc, 'Performance\FPR\fpr_vs_nblocks_', num2str(nsubj), '.mat'])
 h(1) = plot(fpr_fp(1,:), 'color', 'blue');
 std_error_intervals = bernstd( 0.05*ones(1, size(fpr_fp,2)), niters, 0.95 );
 hold on

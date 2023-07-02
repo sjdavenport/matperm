@@ -1,4 +1,4 @@
-function fpr = rc_blb(  spfn, nsubj, subset_size, n_subsamples, n_mc, niters, alpha, remove_data_mean )
+function fpr = rc_blb(  spfn, nsubj, subset_size, n_subsamples, n_mc, niters, alpha )
 % NEWFUN
 %--------------------------------------------------------------------------
 % ARGUMENTS

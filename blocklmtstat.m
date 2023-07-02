@@ -26,12 +26,13 @@ function [ betahat, sigmahat ] = blocklmtstat( block_xY, block_sos, ...
 % data = randn(nvox,nsubj);
 % design_matrix = randn(nsubj, p);
 % nblocks = 10;
-% [ block_xY, block_sos ] = block_lm_summary_stats( data, design_matrix, nblocks );
-% [ betahat, sigmahat ] = blocklmtstat( block_xY, block_sos, design_matrix);
+% [ block_xY, block_sos, block_Y ] = block_lm_summary_stats( data, design_matrix, nblocks, 1 );
+% [ betahat, sigmahat ] = blocklmtstat( block_xY, block_sos, block_Y, design_matrix);
 % [ ~, ~, ~, betahat2, sigmahat2 ] = ...
 %       contrast_tstats_noerrorchecking(data, design_matrix, ones(1,p));
 % sum(betahat(:) - betahat2(:))
-% sum(sigmahat(:) - sigmahat2(:))
+% sum(sigmahat(:) - sigmahat2(:)) %NOT THE SAME NEED TO INVESTIGATE!!!
+% % Basically this function is designed for the residuals!!
 %--------------------------------------------------------------------------
 % AUTHOR: Samuel Davenport
 %--------------------------------------------------------------------------

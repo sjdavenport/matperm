@@ -95,6 +95,7 @@ doblockY = 1;
                                         design_matrix, nblocks, doblockY );
 
 % Compute betahat and sigmahat
+error('I think the line below should be blocklmtstat_orig and without the block Y perhaps??, need to investigate!')
 [ betahat, sigmahat ] = blocklmtstat( block_xY, block_sos, block_Y, design_matrix);
 
 % Compute the t-statistics on the original data
