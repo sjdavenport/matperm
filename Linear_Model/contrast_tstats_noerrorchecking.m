@@ -25,12 +25,12 @@ function [ tstat_array, residuals, Cbetahat, betahat, sigmahat ] = ...
 %--------------------------------------------------------------------------
 % EXAMPLES
 % % One-sample t-statistic
-% Dim = [3,3]; N = 30; categ = zeros(1, N);
-% X = group_design_matrix(categ); C = 1; lat_data = wfield(Dim,N);
-% tstat = contrast_tstats_noerrorchecking(lat_data.field, X, C)
+% nvox = 100; nsubj = 30; categ = zeros(1, N);
+% X = group_design(categ); C = 1; data = randn(100, nsubj);
+% tstat = contrast_tstats_noerrorchecking(data, X, C)
 % %Compare to mvtstat:
-% tstat
-% mvtstat(lat_data.field)
+% tstat_mv = mvtstat(data);
+% sum(tstat(:) - tstat_mv(:))
 % %--------------------------------------------------------------------------
 % AUTHOR: Samuel Davenport
 %--------------------------------------------------------------------------
@@ -47,15 +47,17 @@ n_params = size(design_matrix,2); % parameters
 xtx_inv = inv(design_matrix'*design_matrix);
 
 % Calculate betahat everywhere
-betahat = marray(xtx_inv * design_matrix', data);
-% betahat = xtx_inv * design_matrix' * lat_data;
+% betahat = marray(xtx_inv * design_matrix', data);
+betahat = xtx_inv * design_matrix'*data';
+betahat = betahat';
 
 % Calculate the residual forming matrix
 rfmate = eye(nsubj) - design_matrix * xtx_inv * design_matrix';
 
 % Compute the estimate of the variance via the residuals (I-P)Y
 % residuals = rfmate * lat_data;
-residuals = marray(rfmate, data);
+% residuals = marray(rfmate, data);
+residuals = data*rfmate';
 
 %Square and sum over subjects to calculate the variance
 % This assumes that X has rank p!
@@ -66,7 +68,8 @@ sigmahat = (sum(residuals.^2,D + 1)*(1/(nsubj-n_params))).^(1/2);
 if isequal(size(contrast_matrix), [1,1])
     Cbetahat = contrast_matrix*betahat;
 else
-    Cbetahat = marray(contrast_matrix, betahat);
+%     Cbetahat = marray(contrast_matrix, betahat);
+    Cbetahat = betahat*contrast_matrix';
 end
 tstat_array = Cbetahat./sigmahat;
 

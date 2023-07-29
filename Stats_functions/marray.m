@@ -17,6 +17,8 @@ function [ outarray ] = marray( M, array )
 % AUTHOR: Samuel Davenport
 %--------------------------------------------------------------------------
 
+error('marray is incredibly inefficient!!')
+
 %%  Check mandatory input and get important constants
 %--------------------------------------------------------------------------
 s_M = size(M);
