@@ -15,7 +15,7 @@ function [ bootstrap_samples ] = blb( data, subset_size, n_subsamples, n_mc )
 % bld_dist = blb( data, subset_size, n_subsamples, n_mc );
 % boot_dist = bootstrap(data, n_subsamples*n_mc + 1);
 % [~,fp_dist] = fastperm_mean( data, 12, 0.05, n_subsamples*n_mc + 1);
-% subplot(3,1,1); histogram(bld_dist, 'BinWidth', 0.2); title('Bag of Little Bootstraps'); xlim([-4,4])
+% subplot(3,1,1); histogram(blb_dist, 'BinWidth', 0.2); title('Bag of Little Bootstraps'); xlim([-4,4])
 % subplot(3,1,2); histogram(boot_dist, 'BinWidth', 0.2);  title('Bootstraps'); xlim([-4,4])
 % subplot(3,1,3); histogram(fp_dist, 'BinWidth', 0.2);  title('Fast Perm'); xlim([-4,4])
 %
@@ -46,7 +46,7 @@ for I = 1:n_subsamples
     sample_subset = randsample(nsubj,subset_size,0);
     sample_data = data(:, sample_subset);
     if remove_data_mean == 0
-        bootstrap_subsample =  sample_data - mean(sample_data, 2);
+        bootstrap_subsample = sample_data - mean(sample_data, 2);
     end
     for J = 1:n_mc
         % Computing the weights below appears to be quite expensive! But

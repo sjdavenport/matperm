@@ -103,7 +103,11 @@ for I = 2:nperm
         permuted_tstat_store(:,I) = tstat_perm(mask);
     end
     
-    vec_of_max_cluster_sizes(I) = max_cluster_size_perm;
+    if isempty(max_cluster_size_perm)
+        vec_of_max_cluster_sizes(I) = 0;
+    else
+        vec_of_max_cluster_sizes(I) = max_cluster_size_perm;
+    end
 end
 
 threshold = prctile(vec_of_max_cluster_sizes, 100*(1-alpha) );
