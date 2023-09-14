@@ -72,6 +72,9 @@ tstat = unwrap(nan2zero(mvtstat(data_vectorized)), mask);
 max_cluster_size = max(sizes);
 
 vec_of_max_cluster_sizes = zeros(1,nperm);
+if isempty(max_cluster_size)
+    error('No superthreshold t-stat voxels found')
+end
 vec_of_max_cluster_sizes(1) = max_cluster_size;
 
 % Compute bernoulli random variables for the sign flipping

@@ -1,4 +1,4 @@
-function [ out ] = perm_cluster( data, stat, niters, include_original, subject_mask, alpha )
+function [ out ] = perm_cluster_dep( data, stat, niters, include_original, subject_mask, alpha )
 % perm_cluster uses the permutation test to perform clustersize inference.
 % WORK IN PROGRESS!
 %--------------------------------------------------------------------------
