@@ -15,11 +15,13 @@ close all
 %% %% 2D Examples
 %% Simple 2D example - cluster size vs tfce
 connectivity_criterion = 8; H = 2; E = 0.5;
-dim = [50,50]; nsubj = 50; FWHM = 0;
-Sig = 0.5*peakgen(1, 10, 8, dim);
+dim = [50,50]; nsubj = 50; 
+% Sig = 0.5*peakgen(1, 10, 8, dim);
 % Sig = zeros(dim); Sig(25:26,25) = 3;
-% Sig = 0.5*square_signal(dim, 4, {[25,20], [25,30]} );
+Sig = 0.35*square_signal(dim, 4, {[25,20], [25,30]} );
 data = wfield(dim, nsubj).field + Sig;
+% FWHM = 0; 
+% data = fconv(data, FWHM, 2);
 threshold_tfce = perm_tfce(data, ones(dim), H, E, connectivity_criterion);
 tstat_orig = mvtstat(data);
 tfce_tstat = tfce(tstat_orig, H, E, connectivity_criterion);
