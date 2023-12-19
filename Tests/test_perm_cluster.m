@@ -18,10 +18,12 @@ connectivity_criterion = 8; H = 2; E = 0.5;
 dim = [50,50]; nsubj = 50; 
 % Sig = 0.5*peakgen(1, 10, 8, dim);
 % Sig = zeros(dim); Sig(25:26,25) = 3;
-Sig = 0.35*square_signal(dim, 4, {[25,20], [25,30]} );
+% Sig = 0.35*square_signal(dim, 4, {[25,20], [25,30]} );
+Sig = 0.35*square_signal(dim, 10, {[25,14], [25,36]} );
 data = wfield(dim, nsubj).field + Sig;
 % FWHM = 0; 
-% data = fconv(data, FWHM, 2);
+FWHM = 5;
+data = fconv(data, FWHM, 2);
 threshold_tfce = perm_tfce(data, ones(dim), H, E, connectivity_criterion);
 tstat_orig = mvtstat(data);
 tfce_tstat = tfce(tstat_orig, H, E, connectivity_criterion);
@@ -251,3 +253,17 @@ cope_display( lower_set, upper_set, mean(data,3), c);
 title('Cope set image')
 axis square
 fullscreen
+
+%%
+c = 10;
+nboot = 1000;
+[WMlower_set, WMupper_set] = sss_cope_sets(squeeze(WM_imgs(:,:,slice,:)), MNImask(:,:,slice), c, nboot);
+    
+title('Cope set image')
+% axis square
+fullscreen
+%     colormap(ax1, 'jet')
+WMyellow_set = mean(squeeze(WM_imgs(:,:,slice,1:nsubj)),3)>c;
+overlay_brain([0, 0, slice], 10, {WMlower_set-WMyellow_set,WMyellow_set-WMupper_set,WMupper_set}, ...
+    {'blue', 'yellow', 'red'}, 1, 4)
+saveim('copeset example')

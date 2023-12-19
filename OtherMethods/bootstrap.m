@@ -1,4 +1,4 @@
-function bootstrap_samples = bootstrap( data, nboot, dot, do2sample, show_loader )
+function bootstrap_samples = bootstrap( data, nboot, dotbootstrap, do2sample, show_loader )
 % NEWFUN
 %--------------------------------------------------------------------------
 % ARGUMENTS
@@ -26,7 +26,7 @@ if ~exist('do2sample', 'var')
 end
 
 if ~exist('dot', 'var')
-    dot = 0;
+    dotbootstrap = 0;
 end
 nsubj = size(data, 2);
 
@@ -35,7 +35,7 @@ nsubj = size(data, 2);
 bootstrap_samples = zeros(1,nboot);
 data_mean = mean(data,2);
 
-if dot == 0
+if dotbootstrap == 0
     bootstrap_samples(1) = max(sqrt(nsubj)*data_mean(:));
 else
     data_std = std(data,0,2);
@@ -48,7 +48,7 @@ for I = 1:(nboot-1)
         loader(I-1, nboot-1, 'bootstrap progress:');
     end
     sample_mean = mean(data(:, randsample(nsubj,nsubj,1)),2);
-    if dot == 0 
+    if dotbootstrap == 0 
         bootstrap_samples(I+1) = max(sqrt(nsubj)*(sample_mean(:) - data_mean(:)));
     else
         sample_std = std(data(:, randsample(nsubj,nsubj,1)),0, 2);
@@ -61,7 +61,7 @@ elseif do2sample == 1
         loader(I-1, nboot-1, 'bootstrap progress:');
     end
     sample_mean = mean(data(:, randsample(nsubj,nsubj,1)),2);
-    if dot == 0 
+    if dotbootstrap == 0 
         bootstrap_samples(I+1) = max(sqrt(nsubj)*(abs(sample_mean(:) - data_mean(:))));
     else
         sample_std = std(data(:, randsample(nsubj,nsubj,1)),0, 2);

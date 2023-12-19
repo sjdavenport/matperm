@@ -57,7 +57,7 @@ if ~exist('alpha', 'var')
 end
 
 if ~exist('show_loader', 'var')
-    show_loader = 0;
+    show_loader = 1;
 end
 
 if ~exist('store_perms', 'var')
@@ -155,11 +155,11 @@ for I = 2:nperm
     permuted_block_sum(variable_index{:}, random_sample_negative) = ...
         -permuted_block_sum(variable_index{:}, random_sample_negative);
     
-    % Calculate the permuted t-statistics
+    % Calculate the permuted statistics
     permuted_z = (1/sqrt(nsubj))*sum(permuted_block_sum, D + 1);
 %     permuted_tstat = block_tstat(permuted_block_sum, block_sos, nsubj);
     
-    % Compute the maximal permuted t-statistic
+    % Compute the maximal permuted statistic
     vec_of_maxima(I) = max(permuted_z(:)); 
     
     % Store the permuted t-statistic image (if desired)
