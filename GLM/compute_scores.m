@@ -1,7 +1,8 @@
 function scores = compute_scores(y, Z, X, fitted_values_0, family, link, score_type)
-% COMPUTE_SCORES - Compute scores for a statistical model.
-%
-% Inputs:
+% COMPUTE_SCORES(y, Z, X, fitted_values_0, family, link, score_type)
+% computes the score contributions for a generalized linear model.
+%--------------------------------------------------------------------------
+% INPUT
 %   y (numeric): A matrix of shape (n_samples, 1) representing the dependent variable.
 %   Z (numeric): An array of shape (n_samples, n_nuisance_parameters) representing the nuisance variables.
 %   X (numeric): An array of shape (n_samples, n_parameters) representing the independent variables.
@@ -10,15 +11,15 @@ function scores = compute_scores(y, Z, X, fitted_values_0, family, link, score_t
 %                  'Binomial', 'Gamma', 'Gaussian', 'Inverse Gaussian', 'Negative Binomial', 'Poisson'.
 %   link (char): A string specifying the link function. Must be one of: 'log', 'logit', 'probit', 'cauchy', 'cloglog', 'identity', 'inverse'.
 %   score_type (char, optional): A string specifying the type of scores to compute. Default is 'effective'.
-%
-% Outputs:
+%--------------------------------------------------------------------------
+% OUTPUT
 %   scores (numeric): Computed scores for the model.
-%
-% Example:
-%   scores = compute_scores(y, Z, X, fitted_values_0, 'Gaussian', 'logit', 'effective');
-%   % Compute scores for a Gaussian model with a logit link function.
-%
-% See also: get_par_expo_fam (if applicable).
+%--------------------------------------------------------------------------
+% EXAMPLES
+%  See: test_compute_scores.m
+%--------------------------------------------------------------------------
+% AUTHOR: Samuel Davenport
+%--------------------------------------------------------------------------
 
 if ~exist('score_type', 'var')
     score_type = 'effective';

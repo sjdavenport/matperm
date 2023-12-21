@@ -36,4 +36,8 @@ disp(Vhat);
 disp(betahat0)
 disp(fitted_values0)
 
-scores = compute_scores(y, Z, X, fitted_values0, 'Binomial', 'logit');
+scores = compute_scores(y, Z, X, fitted_values0', 'Binomial', 'logit')
+
+%%
+scores_mv = compute_scores_mv(y, Z, X, 'Binomial', 'logit');
+disp(squeeze(scores_mv))

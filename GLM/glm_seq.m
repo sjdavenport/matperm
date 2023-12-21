@@ -1,5 +1,5 @@
 function [betahat, fitted_values, perfect_separations, pvalues, std_errors] = ...
-                          glm_seq(y, X, distbn, linkfn, progress_message)
+                          glm_seq(y, X, family, linkfn, progress_message)
 % glm_seq runs the generalized linear model sequentially at each voxel in
 % the array y.
 % Inputs:
@@ -49,7 +49,7 @@ for i = 1:nvox
     
     % Fit a GLM for the i-th column of y
     try
-        [model, ~, s] = glmfit(X, y(:, i), distbn, 'link', linkfn, 'constant', 'off');
+        [model, ~, s] = glmfit(X, y(:, i), family, 'link', linkfn, 'constant', 'off');
         betahat(i,:) = model';
         fitted_values(i,:) = glmval(model, X, linkfn, 'constant', 'off')';
         pvalues(i,:) = s.p';
