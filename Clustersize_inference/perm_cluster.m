@@ -73,7 +73,9 @@ max_cluster_size = max(sizes);
 
 vec_of_max_cluster_sizes = zeros(1,nperm);
 if isempty(max_cluster_size)
-    error('No superthreshold t-stat voxels found')
+    warning('No superthreshold t-stat voxels found')
+    threshold = NaN;
+    return
 end
 vec_of_max_cluster_sizes(1) = max_cluster_size;
 

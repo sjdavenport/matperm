@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%
-%%%    This script tests the glm_seq function
+%%%    This script tests the firth_regression_seq function
 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -11,9 +11,9 @@ X = [ones(nsubj, 1),randn(nsubj, nparameters-1)];
 gamma = randn(nparameters, 1);
 p = sigmoid(X * gamma);
 y = binornd(1, p)';
-[gammahat, fitted_values, ~, ~, ~] = glm_seq(y, X, 'Binomial', 'logit');
-disp(gammahat);
-disp(gamma.');
+[gammahat, fitted_values] = firth_regression_seq(y, X);
+disp(gammahat');
+disp(gamma');
 
 %% Single voxel Perfect separation
 nsubj = 50;  % number of observations
@@ -24,21 +24,9 @@ X = [ones(nsubj, 1), X];
 gamma = [-2,-5]';
 p = sigmoid(X * gamma);
 y = binornd(1, p)';
-[gammahat, fitted_values, ~, ~, ~] = glm_seq(y, X, 'Binomial', 'logit');
-disp(gammahat);
+[gammahat, fitted_values] = firth_regression_seq(y, X);
+disp(gammahat');
 disp(gamma.');
-
-%% 
-% Multiple voxel example
-nvoxels = 2;
-nsubj = 100000;
-nparameters = 5;  % dimension of each observation
-X = [ones(nsubj, 1),randn(nsubj, nparameters-1)];
-gamma = randn(nvoxels, nparameters);
-p = sigmoid(X * gamma');
-y = binornd(1, p)';
-[gammahat, fitted_values, ~, ~, ~] = glm_seq(y, X, 'Binomial', 'logit');
-disp(gammahat-gamma);
 
 %% Many voxel example
 nvoxels = 1000;
@@ -48,7 +36,7 @@ X = [ones(nsubj, 1),randn(nsubj, nparameters-1)];
 gamma = randn(nvoxels, nparameters);
 p = sigmoid(X * gamma');
 y = binornd(1, p)';
-[gammahat, fitted_values, pslocs, ~, ~] = glm_seq(y, X, 'Binomial', 'logit');
+[gammahat, fitted_values] = firth_regression_seq(y, X);
 plot(gamma(:), gammahat(:), '*')
 hold on 
 plotid

@@ -42,11 +42,13 @@ perfect_separations = zeros(nvox, 1);
 
 % warning('off', 'MATLAB:log:logOfZero');
 
+warning("")
 % Loop over the columns of y
 for i = 1:nvox
     % Measure progress
-    loader(i, nvox, progress_message);
-    
+    if ~isempty(progress_message)
+        loader(i, nvox, progress_message);
+    end
     % Fit a GLM for the i-th column of y
     try
         [model, ~, s] = glmfit(X, y(:, i), family, 'link', linkfn, 'constant', 'off');
@@ -58,6 +60,10 @@ for i = 1:nvox
 %         conf_ints(:, i, :) = coefCI(model);
     catch
         perfect_separations(i) = 1;
+    end
+    if strcmp('Iteration limit reached.', lastwarn)
+        perfect_separations(i) = 1;
+        warning("")
     end
 end
 

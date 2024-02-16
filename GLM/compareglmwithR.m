@@ -10,7 +10,9 @@ XZ_design = [Z, X];
 
 % Define the family (assuming 'binomial' corresponds to a binomial distribution)
 distbn = 'Binomial';
-linkfn = 'logit';
+% linkfn = 'logit';
+linkfn = 'identity';
+
 
 % Fit the Generalized Linear Model (GLM)
 [betahat, fitted_values,  perfect_separations, pvalues, std_errors] = ...
@@ -31,13 +33,20 @@ disp(Vhat);
 
 %% Computing scores
 % Fit the Generalized Linear Model (GLM)
-[betahat0, fitted_values0] = glm_seq(y, Z, distbn, linkfn);
+linkfn = 'identity';
+[betahat0, fitted_values0] = glm_seq(y, Z, 'Binomial', linkfn);
 
 disp(betahat0)
 disp(fitted_values0)
 
-scores = compute_scores(y, Z, X, fitted_values0', 'Binomial', 'logit')
+scores = compute_scores(y, Z, X, fitted_values0', 'Binomial', linkfn)
 
 %%
 scores_mv = compute_scores_mv(y, Z, X, 'Binomial', 'logit');
 disp(squeeze(scores_mv))
+
+%%
+[beta, fitted_values] = firth_regression(y', XZ_design);
+
+%%
+firth_likelihood(betahat', XZ_design, y')

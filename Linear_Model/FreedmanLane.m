@@ -1,17 +1,20 @@
-function [ vec_of_maxima ] = FreedmanLane( Y, X, Z, contrast_vector, nperm )
-% NEWFUN serves as a function template.
+function [ threshold, vec_of_maxima ] = FreedmanLane( Y, X, Z, contrast_vector, nperm, alpha )
+%FREEDMANLANE Conducts the Freedman-Lane permutation test for contrast in linear model.
+%   [vec_of_maxima] = FreedmanLane(Y, X, Z, contrast_vector, nperm) conducts a
+%   permutation test to assess the significance of a contrast vector in a linear
+%   model. The test is based on the Freedman-Lane permutation algorithm.
 %--------------------------------------------------------------------------
 % ARGUMENTS
 % Mandatory
-%   Y
-%   X
-%   Z
-%   contrast_vector
-%   niters
+%   Y                - Matrix of response variables (nvox by nsubj).
+%   X                - Matrix of fixed effects (nsubj by p_X).
+%   Z                - Matrix of random effects (nsubj by p_Z).
+%   contrast_vector - Contrast vector for the linear model.
 % Optional
+%   nperm            - Number of permutations to perform.
 %--------------------------------------------------------------------------
 % OUTPUT
-% 
+%   vec_of_maxima   - Vector of maximum test statistics from permutations.
 %--------------------------------------------------------------------------
 % EXAMPLES
 % nsubj = 100;
@@ -30,6 +33,12 @@ if ~exist( 'nperm', 'var' )
    nperm = 1000;
 end
 
+if ~exist( 'alpha', 'var' )
+   % Default value
+   alpha = 0.05;
+end
+
+
 
 %%  Check mandatory input and get important constants
 %--------------------------------------------------------------------------
@@ -46,7 +55,6 @@ vec_of_maxima = zeros(1, nperm);
 
 %%  Main Function Loop
 %--------------------------------------------------------------------------
-
 % Fit the linear model on the original data
 tstat_orig = contrast_tstats( Y, [X,Z], contrast_vector );
 % tstat_orig = contrast_tstats( Y*R_Z', [X,Z], contrast_vector ); this is
@@ -79,6 +87,7 @@ for I = 1:nperm-1
 
     vec_of_maxima(I+1) = max(tstat_perm_I);
 end
+threshold = prctile(vec_of_maxima, 100*(1-alpha) );
 
 end
 

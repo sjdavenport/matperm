@@ -1,5 +1,5 @@
-function [scores, pslocs] = compute_scores_mv(y, Z, X, family, link, score_type)
-% COMPUTE_SCORES(y, Z, X, fitted_values_0, family, link, score_type)
+function [scores, pslocs] = compute_scores_mv(y, Z, X, family, link, score_type, progress_message)
+% COMPUTE_SCORES_MV(y, Z, X, fitted_values_0, family, link, score_type)
 % computes the score contributions for a generalized linear model.
 %--------------------------------------------------------------------------
 % INPUT
@@ -17,13 +17,17 @@ function [scores, pslocs] = compute_scores_mv(y, Z, X, family, link, score_type)
 % EXAMPLES
 %  See: test_compute_scores.m
 %--------------------------------------------------------------------------
-% AUTHOR: Samuel Davenport
+% Copyright (C) - 2023 - Samuel Davenport
 %--------------------------------------------------------------------------
 
 %%  Set optional variables
 %--------------------------------------------------------------------------
 if ~exist('score_type', 'var')
     score_type = 'effective';
+end
+
+if ~exist('progress_message', 'var')
+    progress_message = 'Fitting null glm model, progress:';
 end
 
 %% Get the important constants
@@ -43,14 +47,20 @@ p = size(X, 2);
 %%  Main Function Loop
 %--------------------------------------------------------------------------
 % Compute null model
-[~, fitted_values_0, psZ] = ...
-    glm_seq(y, Z, family, link, 'Fitting null glm model, progress:');
+if strcmp(score_type, 'firth')
+    [~, fitted_values_0, psZ] = firth_regression_seq(y,Z,progress_message);
+    score_type = 'effective';
+else
+    [~, fitted_values_0, psZ] = ...
+        glm_seq(y, Z, family, link, progress_message);
+end
 
 % Combine the perfect separations locations into a single vector
 pslocs = find(psZ);
-
 % Compute the scores
-disp('Computing scores...');
+if ~isempty(progress_message)
+    disp('Computing scores...');
+end
 scores = zeros(nvox, p, nsubj);
 for I = setdiff(1:nvox, pslocs)
     yvox = y(I,:);

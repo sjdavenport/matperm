@@ -1,4 +1,5 @@
-function [ tstat_array, residuals ] = contrast_tstats( data, design, contrast_matrix, check_error )
+function [ tstat_array, residuals, Cbetahat, betahat, sigmahat ] = ...
+             contrast_tstats( data, design, contrast_matrix, check_error )
 % CONTRAST_TSTATS( lat_data, design, contrast_matrix, check_error )
 %--------------------------------------------------------------------------
 % ARGUMENTS
@@ -34,8 +35,16 @@ function [ tstat_array, residuals ] = contrast_tstats( data, design, contrast_ma
 % mvtstat(lat_data.field)
 %
 % % Several contrasts
-%
-% 
+% age = randi([40,60], nsubj, 1);
+% sex = rand(nsubj, 1) > 0.6;
+% Z = [ones(nsubj,1), sex, age];
+% X = randn(nsubj,1);
+% design_matrix = [X,Z];
+% nvox = 1000;
+% X_coeff = 2;
+% data = 5 + 0.12*(age'-50) + 0.2*sex' + X_coeff*X' + randn(nvox, nsubj);
+% tstats = contrast_tstats( data, design_matrix, [1,0,0,0] )
+% histogram(tstats)
 %--------------------------------------------------------------------------
 % AUTHOR: Samuel Davenport
 %--------------------------------------------------------------------------
@@ -58,7 +67,7 @@ if check_error == 1
 end
 
 % Having now run error checking calculate the contrast t-statistics
-[ tstat_array, residuals ] = contrast_tstats_noerrorchecking(data, design, contrast_matrix);
+[ tstat_array, residuals, Cbetahat, betahat, sigmahat ] = contrast_tstats_noerrorchecking(data, design, contrast_matrix);
 
 end
 

@@ -1,4 +1,4 @@
-function scores = compute_scores(y, Z, X, fitted_values_0, family, link, score_type)
+function [scores, XTsqrtWIminusH, sqrtinvVvect_times_residuals] = compute_scores(y, Z, X, fitted_values_0, family, link, score_type)
 % COMPUTE_SCORES(y, Z, X, fitted_values_0, family, link, score_type)
 % computes the score contributions for a generalized linear model.
 %--------------------------------------------------------------------------
@@ -47,7 +47,14 @@ if strcmp(score_type, 'effective')
     A = Z'.*sqrtW';  % Calculate Z transpose times diag(sqrtW)
     XTsqrtW = X'.*sqrtW';
     H = A' * inv(A * A') * A;
-    scores = (XTsqrtW * (eye(nsubj) - H)).* (sqrtinvVvect_times_residuals' / (nsubj^0.5));
+    XTsqrtWIminusH = (XTsqrtW * (eye(nsubj) - H));
+    scores = XTsqrtWIminusH.* (sqrtinvVvect_times_residuals' / (nsubj^0.5));
+    % Note that X^TW(I- H)V^{1/2}(Y-muhat) = 
+    % \sum_i (X^TW(I-H))_iV^{1/2}(y_i - muhat_i) 
+    % The individual elements of the sum are the score contributions.
+elseif strcmp(score_type, 'basic')
+    XTsqrtW = X'.*sqrtW';
+    scores = (XTsqrtW *eye(nsubj)).* (sqrtinvVvect_times_residuals' / (nsubj^0.5));
 end
 
 end
