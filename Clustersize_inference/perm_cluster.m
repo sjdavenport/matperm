@@ -1,5 +1,5 @@
-function [ threshold, vec_of_max_excursion_set_sizes, permuted_tstat_store ] = ... 
-        perm_excursionset( data, mask, CDT, alpha, nperm, show_loader, store_perms )
+function [ threshold, vec_of_max_cluster_sizes, permuted_tstat_store ] = ... 
+        perm_cluster( data, mask, CDT, connectivity, alpha, nperm, show_loader, store_perms )
 % NEWFUN
 %--------------------------------------------------------------------------
 % ARGUMENTS
@@ -68,13 +68,16 @@ nsubj = size(data_vectorized,2);
 mask = logical(mask);
 
 tstat = unwrap(nan2zero(mvtstat(data_vectorized)), mask);
-excusion_set_size = sum(tstat(:).*mask(:) > CDT);
+[~, ~, sizes] = numOfConComps(tstat.*mask, CDT, connectivity);
+max_cluster_size = max(sizes);
 
-vec_of_max_excursion_set_sizes = zeros(1,nperm);
-if isempty(excusion_set_size)
-    error('No superthreshold t-stat voxels found')
+vec_of_max_cluster_sizes = zeros(1,nperm);
+if isempty(max_cluster_size)
+    warning('No superthreshold t-stat voxels found')
+    threshold = NaN;
+    return
 end
-vec_of_max_excursion_set_sizes(1) = excusion_set_size;
+vec_of_max_cluster_sizes(1) = max_cluster_size;
 
 % Compute bernoulli random variables for the sign flipping
 random_berns = 2*(binornd(1,0.5, nsubj, nperm )-1/2);
@@ -98,20 +101,21 @@ for I = 2:nperm
     data_perm(:,random_sample_negative) = -data_vectorized(:,random_sample_negative);
     
     tstat_perm = unwrap(nan2zero(mvtstat(data_perm)), mask);
-    excusion_set_size_perm = sum(tstat_perm(:).*mask(:) > CDT);
+    [~, ~, sizes] = numOfConComps(tstat_perm.*mask, CDT, connectivity);
+    max_cluster_size_perm = max(sizes);
     
     if store_perms == 1
         permuted_tstat_store(:,I) = tstat_perm(mask);
     end
     
-    if isempty(excusion_set_size_perm)
-        vec_of_max_excursion_set_sizes(I) = 0;
+    if isempty(max_cluster_size_perm)
+        vec_of_max_cluster_sizes(I) = 0;
     else
-        vec_of_max_excursion_set_sizes(I) = excusion_set_size_perm;
+        vec_of_max_cluster_sizes(I) = max_cluster_size_perm;
     end
 end
 
-threshold = prctile(vec_of_max_excursion_set_sizes, 100*(1-alpha) );
+threshold = prctile(vec_of_max_cluster_sizes, 100*(1-alpha) );
 
 end
 
