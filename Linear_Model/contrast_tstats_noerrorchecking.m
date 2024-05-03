@@ -25,12 +25,15 @@ function [ tstat_array, residuals, Cbetahat, betahat, sigmahat ] = ...
 %--------------------------------------------------------------------------
 % EXAMPLES
 % % One-sample t-statistic
-% nvox = 100; nsubj = 30; categ = zeros(1, N);
+% nvox = 100; nsubj = 30; categ = zeros(1, nsubj);
 % X = group_design(categ); C = 1; data = randn(100, nsubj);
 % tstat = contrast_tstats_noerrorchecking(data, X, C)
 % %Compare to mvtstat:
 % tstat_mv = mvtstat(data);
 % sum(tstat(:) - tstat_mv(:))
+%
+% nvox = 100; nsubj = 30; categ = zeros(1, nsubj);
+% X = group_design(categ); C = 1; data = randn(100, nsubj);
 % %--------------------------------------------------------------------------
 % AUTHOR: Samuel Davenport
 %--------------------------------------------------------------------------

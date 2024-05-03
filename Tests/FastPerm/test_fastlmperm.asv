@@ -1,0 +1,55 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%%    This script tests the fastlmperm function
+%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% One sample
+nsubj = 10; p = 4; nvox = 49;
+data = randn(nvox,nsubj);
+design_matrix = randn(nsubj, p);
+nblocks = 10; contrast_matrix = ones(1,p);
+[ threshold, vec_of_maxima, permuted_tstat_store ] = ...
+             fastlmperm( data, design_matrix, contrast_matrix, nblocks );
+
+%%
+nsubj = 100; nvox = 50; nblocks = 10; alpha = 0.05; nperm = 1000;
+data = normrnd(0,1,nvox,nsubj);
+[~, threshold_orig] = perm_thresh(data, 'T', 0, 0, alpha, NaN, NaN, 0, nperm)
+threshold_fastperm = fastperm( data, nblocks, alpha, nperm )
+threshold_fastlmperm = fastlmperm( data, ones(nsubj,1), 1, nblocks )
+
+%%
+nsubj = 10000; nvox = 4; nblocks = 10; alpha = 0.05; nperm = 1000;
+data = normrnd(0,1,nvox,nsubj);
+[~, threshold_orig] = perm_thresh(data, 'T', 0, 0, alpha, NaN, NaN, 0, nperm)
+threshold_fastperm = fastperm( data, nblocks, alpha, nperm )
+threshold_fastlmperm = fastlmperm( data, ones(nsubj,1), 1, nblocks )
+
+%% One sample comparison to perm_thresh
+nsubj = 10; nvox = 49;
+data = randn(nvox,nsubj);
+design_matrix = ones(nsubj,1); contrast_matrix = 1;
+threshold_flp = fastlmperm( data, design_matrix, contrast_matrix, nblocks, 0.05, 1000 )
+[~, threshold_pm] = perm_thresh( data, 'T' )
+
+%% LM example
+nsubj = 30; nblocks = 10;
+age = randi([40,60], nsubj, 1);
+age = age-mean(age);
+sex = rand(nsubj, 1) > 0.6;
+sex = sex - mean(sex);
+Z = [ones(nsubj,1), sex, age];
+X = randn(nsubj,1);
+design_matrix = [X,Z];
+nvox = 100;
+X_coeff = 1; %Try X_coeff = 0 to see what happens!
+data = 5 + 0.2*sex' + 0.12*age' + X_coeff*X' + randn(nvox, nsubj);
+
+contrast_matrix = [1,0,0,0];
+
+%%
+[ threshold, vec_of_maxima ] = fastlmperm( data, design_matrix, contrast_matrix, nblocks, 0 );
+histogram(vec_of_maxima)
+threshold
+vec_of_maxima(1)

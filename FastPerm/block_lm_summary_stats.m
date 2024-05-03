@@ -31,6 +31,8 @@ function [ block_xY, block_sos, block_Y ] = ...
 % design = randn(nsubj, p);
 % nblocks = 5;
 % [ block_xY, block_sos ] = block_lm_summary_stats( lat_data, design, nblocks )
+% [ betahat, sigmahat ] = blocklmtstat_orig( block_xY, block_sos, design)
+% tstat = 
 %--------------------------------------------------------------------------
 % AUTHOR: Samuel Davenport
 %--------------------------------------------------------------------------
@@ -50,7 +52,7 @@ D = length(dim);
 nparams = size(design,2);
 
 % Compute the number of subjects per block
-nsubj_per_block = floor(nsubj/nblocks);
+nsubj_per_block = ceil(nsubj/nblocks);
 if nsubj_per_block < 1
     warning('There is less than one subject per block so defaulting to a block size of 1 subject')
     nsubj_per_block = 1;

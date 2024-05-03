@@ -1,5 +1,5 @@
-function [ threshold, vec_of_maxima, permuted_tstat_store ] = ... 
-      fastlmperm( data, design_matrix, contrast_matrix, nblocks, alpha,...
+function [ threshold, vec_of_maxima, betahat, sigmahat, permuted_tstat_store ] = ... 
+      fastlmperm( data, design_matrix, contrast_matrix, nblocks, do_abs, alpha,...
                                         nperm, store_perms, init_randomize)
 % FASTLMPERM(  data, design_matrix, contrast_matrix, nblocks, alpha, nperm, ...
 % store_perms, init_randomize)
@@ -50,6 +50,10 @@ function [ threshold, vec_of_maxima, permuted_tstat_store ] = ...
 
 %%  Check optional input
 %--------------------------------------------------------------------------
+if ~exist('do_abs', 'var')
+    do_abs = 0;
+end
+
 if ~exist('nperm', 'var')
     nperm = 5000;
 end
@@ -90,16 +94,19 @@ contrast_tstats_errorchecking( data, design_matrix, contrast_matrix );
 %%  Main Function Loop
 %--------------------------------------------------------------------------
 % Calculate the sum and the mean squared within each of the blocks
-doblockY = 1;
-[ block_xY, block_sos, block_Y ] = block_lm_summary_stats( data, ... 
-                                        design_matrix, nblocks, doblockY );
+[ block_xY, block_sos ] = block_lm_summary_stats( data, ... 
+                                        design_matrix, nblocks, 0 );
 
 % Compute betahat and sigmahat
-error('I think the line below should be blocklmtstat_orig and without the block Y perhaps??, need to investigate!')
-[ betahat, sigmahat ] = blocklmtstat( block_xY, block_sos, block_Y, design_matrix);
+% error('I think the line below should be blocklmtstat_orig and without the block Y perhaps??, need to investigate!')
+% [ betahat, sigmahat ] = blocklmtstat( block_xY, block_sos, block_Y, design_matrix);
+[ betahat, sigmahat ] = blocklmtstat( block_xY, block_sos, design_matrix);
 
 % Compute the t-statistics on the original data
 original_tstat = bs2tstat( betahat, sigmahat, contrast_matrix, xtx_inv );
+if do_abs
+    original_tstat = abs(original_tstat);
+end
 
 % Compute the maximal t-statistic
 vec_of_maxima(1) = max(original_tstat(:));
@@ -139,24 +146,22 @@ for I = 2:nperm
     
     % Note for the python implementation need to use .copy() here!
     permuted_block_xY = block_xY;
-    permuted_block_Y = block_Y;
     % Note there is no need to permute the block sum of squares as
     % minus signs are cancelled out by the square!
     
     % Calculate the permuted block sum
     permuted_block_xY(:, :, random_sample_negative) = ...
                         -permuted_block_xY(:, :, random_sample_negative);
-                    
-    permuted_block_Y(:, random_sample_negative) = ...
-                             -permuted_block_Y(:, random_sample_negative);
     
     % Calculate the permuted t-statistics
     [ betahat_perm, sigmahat_perm ] = ...
-         blocklmtstat(permuted_block_xY, block_sos, permuted_block_Y, ...
-                                                            design_matrix);
+         blocklmtstat(permuted_block_xY, block_sos, design_matrix);
     permuted_tstat = bs2tstat( betahat_perm, sigmahat_perm,...
                                                 contrast_matrix, xtx_inv );
 
+    if do_abs
+        permuted_tstat = abs(permuted_tstat);
+    end
     % Compute the maximal permuted t-statistic
     vec_of_maxima(I) = max(permuted_tstat(:));
     
@@ -170,4 +175,3 @@ end
 threshold = prctile(vec_of_maxima, 100*(1-alpha) );
 
 end
-

@@ -29,7 +29,7 @@ function [ threshold, vec_of_maxima, original_tstat, permuted_tstat_store ] = ..
 % data = normrnd(0,1,nvox,nsubj);
 % [~, threshold_orig] = perm_thresh(data, 'T', 0, 0, alpha, NaN, NaN, 0, nperm)
 % threshold_fast_perm = fastperm( data, nblocks, alpha, nperm )
-%
+% 
 % % Larger Image example
 % dim = [10,10]; nsubj = 1000;
 % data = noisegen(dim, nsubj, 2, 0);

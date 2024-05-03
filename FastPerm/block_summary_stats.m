@@ -31,7 +31,7 @@ dim = s_data(1:end-1);
 D = length(dim);
 
 % Compute the number of subjects per block
-nsubj_per_block = floor(nsubj/nblocks);
+nsubj_per_block = ceil(nsubj/nblocks);
 if nsubj_per_block < 1
     warning('There is less than one subject per block so defaulting to a block size of 1 subject')
     nsubj_per_block = 1;
